@@ -7,7 +7,6 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 
-  <!-- A-Frame + AR.js for WebXR surface detection (Android Chrome + iOS Safari) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/ar.js@2.3.4/aframe/build/aframe-ar.min.js"></script>
 
@@ -34,7 +33,6 @@
       width: 100vw;
     }
 
-    /* ── LANDING SCREEN ── */
     #landingScreen {
       position: fixed; inset: 0;
       background: linear-gradient(160deg, #2A0E00 0%, #3D1C02 40%, #5C2E08 100%);
@@ -56,367 +54,211 @@
 
     .restaurant-name {
       font-family: var(--font-display);
-      font-size: 32px;
-      font-weight: 600;
-      color: var(--cream);
-      letter-spacing: 0.02em;
-      margin-bottom: 4px;
+      font-size: 32px; font-weight: 600;
+      color: var(--cream); letter-spacing: 0.02em; margin-bottom: 4px;
     }
 
     .restaurant-tagline {
-      font-size: 11px;
-      font-weight: 300;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: rgba(245,166,35,0.6);
-      margin-bottom: 2.5rem;
+      font-size: 11px; font-weight: 300;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(245,166,35,0.6); margin-bottom: 2.5rem;
     }
 
     .landing-card {
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(245,166,35,0.2);
-      border-radius: 20px;
-      padding: 1.8rem 1.5rem;
-      margin-bottom: 2rem;
-      max-width: 320px;
-      width: 100%;
+      border-radius: 20px; padding: 1.8rem 1.5rem;
+      margin-bottom: 2rem; max-width: 320px; width: 100%;
     }
 
     .landing-card h2 {
-      font-family: var(--font-display);
-      font-size: 20px;
-      color: var(--cream);
-      margin-bottom: 8px;
-      font-weight: 600;
+      font-family: var(--font-display); font-size: 20px;
+      color: var(--cream); margin-bottom: 8px; font-weight: 600;
     }
 
     .landing-card p {
-      font-size: 13px;
-      color: rgba(253,246,238,0.55);
-      line-height: 1.6;
-      font-weight: 300;
+      font-size: 13px; color: rgba(253,246,238,0.55); line-height: 1.6; font-weight: 300;
     }
 
-    .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 1.2rem;
-      text-align: left;
-    }
+    .steps { display: flex; flex-direction: column; gap: 12px; margin-top: 1.2rem; text-align: left; }
 
-    .step-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .step-row { display: flex; align-items: center; gap: 12px; }
 
     .step-dot {
-      width: 26px; height: 26px;
-      border-radius: 50%;
-      background: rgba(212,131,10,0.2);
-      border: 1px solid rgba(212,131,10,0.4);
+      width: 26px; height: 26px; border-radius: 50%;
+      background: rgba(212,131,10,0.2); border: 1px solid rgba(212,131,10,0.4);
       display: flex; align-items: center; justify-content: center;
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--amber-light);
-      flex-shrink: 0;
+      font-size: 11px; font-weight: 500; color: var(--amber-light); flex-shrink: 0;
     }
 
-    .step-text {
-      font-size: 12px;
-      color: rgba(253,246,238,0.7);
-      font-weight: 300;
-    }
+    .step-text { font-size: 12px; color: rgba(253,246,238,0.7); font-weight: 300; }
 
     .start-btn {
-      width: 100%;
-      max-width: 320px;
-      padding: 16px;
+      width: 100%; max-width: 320px; padding: 16px;
       background: linear-gradient(135deg, var(--amber) 0%, var(--amber-light) 100%);
-      border: none;
-      border-radius: 14px;
-      font-family: var(--font-body);
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--brown);
-      letter-spacing: 0.04em;
-      cursor: pointer;
-      transition: transform 0.15s ease;
+      border: none; border-radius: 14px; font-family: var(--font-body);
+      font-size: 15px; font-weight: 500; color: var(--brown);
+      letter-spacing: 0.04em; cursor: pointer; transition: transform 0.15s ease;
     }
     .start-btn:active { transform: scale(0.97); }
 
     .compat-note {
-      margin-top: 1rem;
-      font-size: 10px;
-      color: rgba(253,246,238,0.25);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      margin-top: 1rem; font-size: 10px;
+      color: rgba(253,246,238,0.25); letter-spacing: 0.1em; text-transform: uppercase;
     }
 
-    /* ── DISH SELECTOR MENU ── */
     #dishMenu {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      z-index: 1000;
-      display: none;
-      padding: 0 0 env(safe-area-inset-bottom);
+      position: fixed; bottom: 0; left: 0; right: 0;
+      z-index: 1000; display: none; padding: 0 0 env(safe-area-inset-bottom);
     }
 
     .menu-handle {
-      width: 36px; height: 4px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 2px;
-      margin: 0 auto 12px;
+      width: 36px; height: 4px; background: rgba(255,255,255,0.2);
+      border-radius: 2px; margin: 0 auto 12px;
     }
 
     .menu-sheet {
       background: linear-gradient(180deg, #3D1C02 0%, #2A0E00 100%);
       border-top: 1px solid rgba(245,166,35,0.15);
-      border-radius: 24px 24px 0 0;
-      padding: 14px 0 20px;
+      border-radius: 24px 24px 0 0; padding: 14px 0 20px;
     }
 
     .menu-title {
-      font-family: var(--font-display);
-      font-size: 13px;
-      font-style: italic;
-      color: rgba(245,166,35,0.7);
-      text-align: center;
-      margin-bottom: 12px;
-      letter-spacing: 0.05em;
+      font-family: var(--font-display); font-size: 13px; font-style: italic;
+      color: rgba(245,166,35,0.7); text-align: center; margin-bottom: 12px; letter-spacing: 0.05em;
     }
 
-    .dish-scroll {
-      display: flex;
-      gap: 12px;
-      padding: 4px 16px 4px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
+    .dish-scroll { display: flex; gap: 12px; padding: 4px 16px; overflow-x: auto; scrollbar-width: none; }
     .dish-scroll::-webkit-scrollbar { display: none; }
 
     .dish-chip {
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      transition: transform 0.15s ease;
+      flex-shrink: 0; display: flex; flex-direction: column;
+      align-items: center; gap: 6px; cursor: pointer; transition: transform 0.15s ease;
     }
     .dish-chip:active { transform: scale(0.94); }
 
     .dish-chip-img {
-      width: 64px; height: 64px;
-      border-radius: 16px;
-      object-fit: cover;
-      border: 2px solid transparent;
-      transition: border-color 0.2s;
+      width: 64px; height: 64px; border-radius: 16px;
+      border: 2px solid transparent; transition: border-color 0.2s;
       background: rgba(255,255,255,0.08);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 28px;
+      display: flex; align-items: center; justify-content: center; font-size: 28px;
     }
 
-    .dish-chip.active .dish-chip-img {
-      border-color: var(--amber-light);
-    }
+    .dish-chip.active .dish-chip-img  { border-color: var(--amber-light); }
+    .dish-chip-name { font-size: 10px; font-weight: 400; color: rgba(253,246,238,0.6); text-align: center; max-width: 70px; line-height: 1.3; }
+    .dish-chip.active .dish-chip-name { color: var(--amber-light); }
 
-    .dish-chip-name {
-      font-size: 10px;
-      font-weight: 400;
-      color: rgba(253,246,238,0.6);
-      text-align: center;
-      max-width: 70px;
-      line-height: 1.3;
-    }
-
-    .dish-chip.active .dish-chip-name {
-      color: var(--amber-light);
-    }
-
-    /* ── INFO OVERLAY (shows when dish placed) ── */
     #dishInfo {
-      position: fixed;
-      top: 20px; left: 16px; right: 16px;
-      z-index: 1000;
-      display: none;
-      pointer-events: none;
+      position: fixed; top: 20px; left: 16px; right: 16px;
+      z-index: 1000; display: none; pointer-events: none;
     }
 
     .info-card {
-      background: rgba(20, 8, 0, 0.82);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(245,166,35,0.25);
-      border-radius: 18px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
+      background: rgba(20,8,0,0.82); backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(245,166,35,0.25);
+      border-radius: 18px; padding: 14px 16px; display: flex; align-items: center; gap: 14px;
     }
 
-    .info-emoji {
-      font-size: 36px;
-      flex-shrink: 0;
-    }
+    .info-emoji { font-size: 36px; flex-shrink: 0; }
+    .info-text  { flex: 1; }
+    .info-name  { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--cream); line-height: 1.2; margin-bottom: 3px; }
+    .info-desc  { font-size: 11px; color: rgba(253,246,238,0.55); font-weight: 300; line-height: 1.5; margin-bottom: 5px; }
+    .info-price { font-size: 16px; font-weight: 500; color: var(--amber-light); letter-spacing: 0.02em; }
 
-    .info-text { flex: 1; }
-
-    .info-name {
-      font-family: var(--font-display);
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--cream);
-      line-height: 1.2;
-      margin-bottom: 3px;
-    }
-
-    .info-desc {
-      font-size: 11px;
-      color: rgba(253,246,238,0.55);
-      font-weight: 300;
-      line-height: 1.5;
-      margin-bottom: 5px;
-    }
-
-    .info-price {
-      font-size: 16px;
-      font-weight: 500;
-      color: var(--amber-light);
-      letter-spacing: 0.02em;
-    }
-
-    /* ── TOP BAR ── */
     #topBar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 900;
-      display: none;
-      padding: 14px 16px env(safe-area-inset-top);
-      justify-content: space-between;
-      align-items: center;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+      display: flex; padding: 14px 16px; justify-content: space-between; align-items: center;
     }
 
-    .top-brand {
-      font-family: var(--font-display);
-      font-size: 14px;
-      color: var(--cream);
-      letter-spacing: 0.06em;
-      opacity: 0.85;
-    }
+    .top-brand { font-family: var(--font-display); font-size: 14px; color: var(--cream); letter-spacing: 0.06em; opacity: 0.85; }
+    .surface-hint { font-size: 10px; font-weight: 300; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(245,166,35,0.6); text-align: right; }
 
-    .surface-hint {
-      font-size: 10px;
-      font-weight: 300;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: rgba(245,166,35,0.6);
-      text-align: right;
-    }
-
-    /* ── PLACE BUTTON ── */
     #placeBtn {
-      position: fixed;
-      bottom: 200px;
-      left: 50%; transform: translateX(-50%);
-      z-index: 1000;
-      display: none;
+      position: fixed; bottom: 200px; left: 50%; transform: translateX(-50%);
+      z-index: 1000; display: none;
       background: linear-gradient(135deg, var(--amber) 0%, var(--amber-light) 100%);
-      border: none;
-      border-radius: 50px;
-      padding: 14px 32px;
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--brown);
-      letter-spacing: 0.04em;
-      cursor: pointer;
-      white-space: nowrap;
+      border: none; border-radius: 50px; padding: 14px 32px;
+      font-family: var(--font-body); font-size: 14px; font-weight: 500;
+      color: var(--brown); letter-spacing: 0.04em; cursor: pointer; white-space: nowrap;
       box-shadow: 0 4px 24px rgba(212,131,10,0.4);
       animation: pulse-btn 2s ease-in-out infinite;
     }
     @keyframes pulse-btn {
       0%, 100% { box-shadow: 0 4px 24px rgba(212,131,10,0.4); }
-      50% { box-shadow: 0 4px 36px rgba(212,131,10,0.7); }
+      50%       { box-shadow: 0 4px 36px rgba(212,131,10,0.7); }
     }
     #placeBtn:active { transform: translateX(-50%) scale(0.96); }
 
-    /* ── SCAN RETICLE ── */
     #reticle {
-      position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 60px; height: 60px;
-      z-index: 800;
-      display: none;
-      pointer-events: none;
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 60px; height: 60px; z-index: 800; display: none; pointer-events: none;
     }
-
     .reticle-ring {
-      width: 100%; height: 100%;
-      border-radius: 50%;
+      width: 100%; height: 100%; border-radius: 50%;
       border: 1.5px solid rgba(245,166,35,0.7);
       animation: reticle-pulse 1.5s ease-in-out infinite;
     }
     @keyframes reticle-pulse {
       0%, 100% { transform: scale(1); opacity: 0.7; }
-      50% { transform: scale(1.15); opacity: 1; }
+      50%       { transform: scale(1.15); opacity: 1; }
     }
 
-    /* ── AR SCENE ── */
+    #iosARBtn {
+      position: fixed; bottom: 260px; left: 50%; transform: translateX(-50%);
+      z-index: 1000; display: none;
+      background: rgba(20,8,0,0.85); border: 1px solid rgba(245,166,35,0.4);
+      border-radius: 50px; padding: 11px 26px; font-family: var(--font-body);
+      font-size: 13px; font-weight: 400; color: var(--amber-light);
+      letter-spacing: 0.06em; cursor: pointer; white-space: nowrap;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); text-decoration: none;
+    }
+
+    #modelLoader {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      z-index: 2000; display: none; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .loader-ring {
+      width: 40px; height: 40px;
+      border: 2px solid rgba(245,166,35,0.2); border-top-color: var(--amber-light);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader-text { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245,166,35,0.6); }
+
     a-scene { display: block; }
     .a-canvas { display: block !important; }
 
-    /* ── FALLBACK for non-WebXR ── */
     #fallback {
       position: fixed; inset: 0;
       background: linear-gradient(160deg, #2A0E00 0%, #3D1C02 100%);
-      z-index: 99999;
-      display: none;
-      flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 2rem; text-align: center;
+      z-index: 99999; display: none; flex-direction: column;
+      align-items: center; justify-content: center; padding: 2rem; text-align: center;
     }
-
-    .fallback-emoji { font-size: 48px; margin-bottom: 1rem; }
-    .fallback-title { font-family: var(--font-display); font-size: 24px; color: var(--cream); margin-bottom: 8px; }
-    .fallback-text  { font-size: 13px; color: rgba(253,246,238,0.55); line-height: 1.6; max-width: 280px; }
-    .fallback-tip   { margin-top: 1.5rem; font-size: 11px; color: rgba(245,166,35,0.6); letter-spacing: 0.1em; text-transform: uppercase; }
+    .fallback-emoji  { font-size: 48px; margin-bottom: 1rem; }
+    .fallback-title  { font-family: var(--font-display); font-size: 24px; color: var(--cream); margin-bottom: 8px; }
+    .fallback-text   { font-size: 13px; color: rgba(253,246,238,0.55); line-height: 1.6; max-width: 280px; }
+    .fallback-tip    { margin-top: 1.5rem; font-size: 11px; color: rgba(245,166,35,0.6); letter-spacing: 0.1em; text-transform: uppercase; }
   </style>
 </head>
 <body>
 
-<!-- ── LANDING SCREEN ── -->
 <div id="landingScreen">
   <div class="restaurant-logo">🍽️</div>
   <div class="restaurant-name">La Maison</div>
   <div class="restaurant-tagline">AR Dining Experience</div>
-
   <div class="landing-card">
     <h2>See your dish before you order</h2>
     <p>Point your camera at any flat surface and watch your meal come to life — right on your table.</p>
     <div class="steps">
-      <div class="step-row">
-        <div class="step-dot">1</div>
-        <span class="step-text">Tap "Start AR" and allow camera access</span>
-      </div>
-      <div class="step-row">
-        <div class="step-dot">2</div>
-        <span class="step-text">Point at your table until the surface is detected</span>
-      </div>
-      <div class="step-row">
-        <div class="step-dot">3</div>
-        <span class="step-text">Pick a dish and tap "Place on Table"</span>
-      </div>
+      <div class="step-row"><div class="step-dot">1</div><span class="step-text">Tap "Start AR" and allow camera access</span></div>
+      <div class="step-row"><div class="step-dot">2</div><span class="step-text">Point at your table until the surface is detected</span></div>
+      <div class="step-row"><div class="step-dot">3</div><span class="step-text">Pick a dish and tap "Place on Table"</span></div>
     </div>
   </div>
-
   <button class="start-btn" id="startBtn">Start AR Experience</button>
   <p class="compat-note">Works on Chrome (Android) · Safari (iOS 15+)</p>
 </div>
 
-<!-- ── FALLBACK ── -->
 <div id="fallback">
   <div class="fallback-emoji">📱</div>
   <div class="fallback-title">Open on your phone</div>
@@ -424,33 +266,36 @@
   <div class="fallback-tip">Chrome on Android · Safari on iOS 15+</div>
 </div>
 
-<!-- ── TOP BAR ── -->
-<div id="topBar" style="display:flex;">
+<div id="topBar">
   <span class="top-brand">La Maison · AR</span>
   <span class="surface-hint" id="surfaceHintText">Scanning surface…</span>
 </div>
 
-<!-- ── RETICLE ── -->
-<div id="reticle">
-  <div class="reticle-ring"></div>
+<div id="reticle"><div class="reticle-ring"></div></div>
+
+<div id="modelLoader">
+  <div class="loader-ring"></div>
+  <div class="loader-text">Loading model…</div>
 </div>
 
-<!-- ── PLACE BUTTON ── -->
 <button id="placeBtn">Place on Table 🍽️</button>
 
-<!-- ── DISH INFO OVERLAY ── -->
+<!-- iOS Quick Look AR link — href points to your USDZ file -->
+<a id="iosARBtn" rel="ar" href="3d Dish/Pasta Carbonara.usdz">
+  View in AR (iOS Quick Look) 🍎
+</a>
+
 <div id="dishInfo">
   <div class="info-card">
     <div class="info-emoji" id="infoEmoji">🍝</div>
     <div class="info-text">
-      <div class="info-name" id="infoName">Pasta Carbonara</div>
-      <div class="info-desc" id="infoDesc">Classic Roman pasta with guanciale, egg yolk, Pecorino Romano and black pepper.</div>
+      <div class="info-name"  id="infoName">Pasta Carbonara</div>
+      <div class="info-desc"  id="infoDesc">Classic Roman pasta with guanciale, egg yolk, Pecorino Romano and black pepper.</div>
       <div class="info-price" id="infoPrice">₹ 420</div>
     </div>
   </div>
 </div>
 
-<!-- ── DISH SELECTOR ── -->
 <div id="dishMenu">
   <div class="menu-sheet">
     <div class="menu-handle"></div>
@@ -459,7 +304,6 @@
   </div>
 </div>
 
-<!-- ── AR SCENE ── -->
 <a-scene
   embedded
   arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
@@ -468,151 +312,98 @@
   style="display:none;"
   id="arScene">
 
-  <a-assets>
-    <!-- Dish placeholder geometries — swap with real .glb models -->
-    <a-mixin id="dish-base"
-      geometry="primitive: cylinder; radius: 0.12; height: 0.02"
-      material="color: #F5E6D0; roughness: 0.3; metalness: 0.1"
-      animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear">
-    </a-mixin>
+  <a-assets timeout="30000">
+    <!-- Preload Pasta Carbonara GLB -->
+    <a-asset-item id="pastaModel" src="3d Dish/Pasta Carbonara.glb"></a-asset-item>
   </a-assets>
 
   <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
-  <!-- Dish entity — positioned dynamically via JS -->
   <a-entity id="dishEntity" visible="false" position="0 0 -1.5">
 
-    <!-- Plate base -->
-    <a-cylinder
-      id="dishPlate"
-      radius="0.14" height="0.018"
-      color="#F0E8D8"
-      roughness="0.2" metalness="0.15"
-      shadow="cast: true; receive: true">
-    </a-cylinder>
+    <!-- Real GLB 3D model -->
+    <a-entity
+      id="dishModel"
+      gltf-model="#pastaModel"
+      scale="0.4 0.4 0.4"
+      position="0 0 0"
+      rotation="0 0 0"
+      animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
+    </a-entity>
 
-    <!-- Dish food representation (emoji-based billboard) -->
-    <a-text
-      id="dishEmoji3d"
-      value="🍝"
-      align="center"
-      position="0 0.06 0"
-      scale="0.5 0.5 0.5"
-      look-at="[a-camera]">
-    </a-text>
-
-    <!-- Subtle glow ring -->
+    <!-- Glow ring under the model -->
     <a-torus
       radius="0.16" radius-tubular="0.004"
       color="#F5A623" opacity="0.35"
-      position="0 0.001 0"
-      rotation="-90 0 0"
+      position="0 0 0" rotation="-90 0 0"
       animation="property: opacity; from: 0.15; to: 0.5; loop: true; dur: 1800; dir: alternate; easing: easeInOutSine">
     </a-torus>
 
-    <!-- Floating name label -->
+    <!-- Floating dish name -->
     <a-text
       id="dishLabel3d"
       value="Pasta Carbonara"
-      align="center"
-      color="#FDF6EE"
-      position="0 0.28 0"
-      scale="0.18 0.18 0.18"
-      look-at="[a-camera]"
-      font="https://cdn.jsdelivr.net/npm/aframe/examples/fonts/Exo2Bold.fnt">
-    </a-text>
-
-    <!-- Price tag -->
-    <a-text
-      id="priceLabel3d"
-      value="₹ 420"
-      align="center"
-      color="#F5A623"
-      position="0 0.22 0"
-      scale="0.14 0.14 0.14"
+      align="center" color="#FDF6EE"
+      position="0 0.35 0" scale="0.2 0.2 0.2"
       look-at="[a-camera]">
     </a-text>
 
-    <!-- Entrance animation -->
-    <a-animation
-      attribute="scale"
-      from="0 0 0"
-      to="1 1 1"
-      dur="600"
-      easing="easeOutElastic"
-      fill="forwards">
-    </a-animation>
+    <!-- Price label -->
+    <a-text
+      id="priceLabel3d"
+      value="Rs. 420"
+      align="center" color="#F5A623"
+      position="0 0.26 0" scale="0.16 0.16 0.16"
+      look-at="[a-camera]">
+    </a-text>
+
+    <a-animation attribute="scale" from="0 0 0" to="1 1 1" dur="600" easing="easeOutElastic" fill="forwards"></a-animation>
 
   </a-entity>
 
-  <!-- Ground shadow plane -->
-  <a-plane
-    id="shadowPlane"
-    rotation="-90 0 0"
-    width="2" height="2"
-    color="#000000"
-    opacity="0.0"
-    position="0 -0.01 -1.5">
-  </a-plane>
+  <a-plane id="shadowPlane" rotation="-90 0 0" width="2" height="2" color="#000000" opacity="0.0" position="0 -0.01 -1.5"></a-plane>
 
 </a-scene>
 
 <script>
-  /* ── DISH DATA ── */
   const dishes = [
     {
       id: 'pasta',
       emoji: '🍝',
       name: 'Pasta Carbonara',
       desc: 'Classic Roman pasta with guanciale, egg yolk, Pecorino Romano and black pepper.',
-      price: '₹ 420',
-      color: '#E8C87A',
-      scale: '1 1 1'
+      price: 'Rs. 420',
+      glb: '3d Dish/Pasta Carbonara.glb',
+      usdz: '3d Dish/Pasta Carbonara.usdz',
+      scale: '0.4 0.4 0.4'
     },
     {
-      id: 'steak',
-      emoji: '🥩',
-      name: 'Grilled Tenderloin',
+      id: 'steak', emoji: '🥩', name: 'Grilled Tenderloin',
       desc: 'Prime beef tenderloin, grilled to perfection with herb butter and truffle jus.',
-      price: '₹ 1,250',
-      color: '#8B3A1A',
-      scale: '1.1 1.1 1.1'
+      price: 'Rs. 1,250', glb: null, usdz: null, scale: '0.4 0.4 0.4'
     },
     {
-      id: 'sushi',
-      emoji: '🍱',
-      name: 'Signature Sushi Platter',
-      desc: 'Chef\'s selection of 12 pieces — salmon, tuna, prawn and avocado rolls.',
-      price: '₹ 880',
-      color: '#D4E8C8',
-      scale: '1.2 0.8 1.2'
+      id: 'sushi', emoji: '🍱', name: 'Signature Sushi Platter',
+      desc: "Chef's selection of 12 pieces — salmon, tuna, prawn and avocado rolls.",
+      price: 'Rs. 880', glb: null, usdz: null, scale: '0.4 0.4 0.4'
     },
     {
-      id: 'burger',
-      emoji: '🍔',
-      name: 'Truffle Smash Burger',
+      id: 'burger', emoji: '🍔', name: 'Truffle Smash Burger',
       desc: 'Double smash patty, truffle aioli, aged cheddar, caramelised onion brioche bun.',
-      price: '₹ 560',
-      color: '#C8803A',
-      scale: '0.9 1.2 0.9'
+      price: 'Rs. 560', glb: null, usdz: null, scale: '0.4 0.4 0.4'
     },
     {
-      id: 'dessert',
-      emoji: '🍮',
-      name: 'Crème Brûlée',
+      id: 'dessert', emoji: '🍮', name: 'Crème Brûlée',
       desc: 'Classic French vanilla custard with a perfectly caramelised sugar crust.',
-      price: '₹ 320',
-      color: '#F5D5A0',
-      scale: '0.85 0.85 0.85'
+      price: 'Rs. 320', glb: null, usdz: null, scale: '0.4 0.4 0.4'
     }
   ];
 
   let activeDish = dishes[0];
   let dishPlaced = false;
-  let surfaceReady = false;
-  let arStarted = false;
+  let arStarted  = false;
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  /* ── DOM REFS ── */
   const landingScreen  = document.getElementById('landingScreen');
   const fallbackScreen = document.getElementById('fallback');
   const arScene        = document.getElementById('arScene');
@@ -620,21 +411,22 @@
   const dishInfo       = document.getElementById('dishInfo');
   const placeBtn       = document.getElementById('placeBtn');
   const reticle        = document.getElementById('reticle');
-  const topBar         = document.getElementById('topBar');
   const surfaceHint    = document.getElementById('surfaceHintText');
   const dishScroll     = document.getElementById('dishScroll');
   const dishEntity     = document.getElementById('dishEntity');
-  const dishEmoji3d    = document.getElementById('dishEmoji3d');
+  const dishModel      = document.getElementById('dishModel');
   const dishLabel3d    = document.getElementById('dishLabel3d');
   const priceLabel3d   = document.getElementById('priceLabel3d');
-  const dishPlate      = document.getElementById('dishPlate');
   const infoEmoji      = document.getElementById('infoEmoji');
   const infoName       = document.getElementById('infoName');
   const infoDesc       = document.getElementById('infoDesc');
   const infoPrice      = document.getElementById('infoPrice');
   const startBtn       = document.getElementById('startBtn');
+  const iosARBtn       = document.getElementById('iosARBtn');
+  const modelLoader    = document.getElementById('modelLoader');
 
-  /* ── BUILD DISH SELECTOR ── */
+  if (isIOS) iosARBtn.style.display = 'block';
+
   dishes.forEach((dish, i) => {
     const chip = document.createElement('div');
     chip.className = 'dish-chip' + (i === 0 ? ' active' : '');
@@ -646,40 +438,50 @@
     dishScroll.appendChild(chip);
   });
 
-  /* ── SELECT DISH ── */
   function selectDish(dish, chipEl) {
     activeDish = dish;
     document.querySelectorAll('.dish-chip').forEach(c => c.classList.remove('active'));
     chipEl.classList.add('active');
 
-    // Update 3D scene
-    dishEmoji3d.setAttribute('value', dish.emoji);
     dishLabel3d.setAttribute('value', dish.name);
     priceLabel3d.setAttribute('value', dish.price);
-    dishPlate.setAttribute('color', dish.color);
 
-    // Update info card
+    if (dish.glb) {
+      modelLoader.style.display = 'flex';
+      dishModel.setAttribute('gltf-model', dish.glb);
+      dishModel.setAttribute('scale', dish.scale);
+      dishModel.setAttribute('visible', 'true');
+      dishModel.addEventListener('model-loaded', () => { modelLoader.style.display = 'none'; }, { once: true });
+    } else {
+      dishModel.setAttribute('visible', 'false');
+      modelLoader.style.display = 'none';
+    }
+
+    if (dish.usdz) {
+      iosARBtn.href = dish.usdz;
+      if (isIOS) iosARBtn.style.display = 'block';
+    } else {
+      iosARBtn.style.display = 'none';
+    }
+
     infoEmoji.textContent = dish.emoji;
     infoName.textContent  = dish.name;
     infoDesc.textContent  = dish.desc;
     infoPrice.textContent = dish.price;
 
-    // If already placed, re-animate
     if (dishPlaced) {
       dishEntity.setAttribute('visible', 'false');
       setTimeout(() => {
         dishEntity.setAttribute('visible', 'true');
         dishEntity.setAttribute('scale', '0 0 0');
-        dishEntity.setAttribute('animation', 'property: scale; from: 0 0 0; to: 1 1 1; dur: 500; easing: easeOutElastic');
+        setTimeout(() => dishEntity.setAttribute('scale', '1 1 1'), 50);
       }, 100);
     }
   }
 
-  /* ── START AR ── */
   startBtn.addEventListener('click', () => {
-    // Check if mobile
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if (!isMobile && !window.location.hostname.includes('localhost')) {
+    if (!isMobile && !['localhost','127.0.0.1'].includes(window.location.hostname) && !window.location.hostname.includes('github')) {
       landingScreen.style.display = 'none';
       fallbackScreen.style.display = 'flex';
       return;
@@ -693,70 +495,45 @@
       dishMenu.style.display = 'block';
       reticle.style.display  = 'block';
       placeBtn.style.display = 'block';
+      if (isIOS && activeDish.usdz) iosARBtn.style.display = 'block';
       arStarted = true;
 
-      // Simulate surface detection after 2s
-      setTimeout(() => {
-        surfaceReady = true;
+      modelLoader.style.display = 'flex';
+      dishModel.addEventListener('model-loaded', () => {
+        modelLoader.style.display = 'none';
         surfaceHint.textContent = 'Surface detected — tap to place';
-        reticle.style.borderColor = 'rgba(245,166,35,1)';
-      }, 2000);
+      }, { once: true });
 
+      setTimeout(() => { modelLoader.style.display = 'none'; }, 10000);
     }, 500);
   });
 
-  /* ── PLACE DISH ── */
   placeBtn.addEventListener('click', () => {
     if (!arStarted) return;
-
     dishEntity.setAttribute('visible', 'true');
     dishEntity.setAttribute('scale', '0 0 0');
-
-    // Animate in
-    setTimeout(() => {
-      dishEntity.setAttribute('scale', '1 1 1');
-    }, 50);
-
+    setTimeout(() => dishEntity.setAttribute('scale', '1 1 1'), 50);
     dishPlaced = true;
     placeBtn.textContent = 'Move Dish 🔄';
-    surfaceHint.textContent = 'Tap again to reposition';
+    surfaceHint.textContent = 'Tap surface to reposition';
     dishInfo.style.display = 'block';
-
-    // Update info overlay
     infoEmoji.textContent = activeDish.emoji;
     infoName.textContent  = activeDish.name;
     infoDesc.textContent  = activeDish.desc;
     infoPrice.textContent = activeDish.price;
   });
 
-  /* ── AR.js scene events ── */
-  document.addEventListener('DOMContentLoaded', () => {
-    const scene = document.querySelector('a-scene');
-    if (scene) {
-      scene.addEventListener('loaded', () => {
-        console.log('AR scene loaded');
-      });
-    }
-  });
-
-  /* ── DEVICE MOTION for repositioning ── */
-  let tapCount = 0;
   document.addEventListener('touchend', (e) => {
     if (!arStarted || !dishPlaced) return;
-    if (e.target.closest('#dishMenu') || e.target.closest('#placeBtn') || e.target.closest('#dishInfo')) return;
-
-    // Slightly randomise position on tap to simulate repositioning
-    tapCount++;
+    if (e.target.closest('#dishMenu') || e.target.closest('#placeBtn') ||
+        e.target.closest('#dishInfo') || e.target.closest('#iosARBtn')) return;
     const x = (Math.random() - 0.5) * 0.4;
     const z = -1.2 - Math.random() * 0.6;
     dishEntity.setAttribute('position', `${x} 0 ${z}`);
     dishEntity.setAttribute('scale', '0 0 0');
-    setTimeout(() => {
-      dishEntity.setAttribute('scale', '1 1 1');
-    }, 80);
+    setTimeout(() => dishEntity.setAttribute('scale', '1 1 1'), 80);
   });
 
-  /* ── PREVENT CONTEXT MENU ── */
   document.addEventListener('contextmenu', e => e.preventDefault());
 </script>
 </body>
