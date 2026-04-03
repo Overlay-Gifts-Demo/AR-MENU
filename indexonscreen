@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+  <title>AR Menu | See Your Dish on the Table</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+  <!-- Model Viewer for 3D/AR rendering (Google's official WebXR library) -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <style>
+    :root {
+      --cream: #FDF6EE;
+      --amber: #D4830A;
+      --amber-light: #F5A623;
+      --brown: #3D1C02;
+      --font-display: 'Playfair Display', serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: #000;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ── CAMERA FEED ── */
+    #cameraFeed {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      display: none;
+    }
+
+    /* ── LANDING SCREEN ── */
+    #landingScreen {
+      position: fixed; inset: 0;
+      background: linear-gradient(160deg, #2A0E00 0%, #3D1C02 40%, #5C2E08 100%);
+      z-index: 9999;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem; text-align: center;
+    }
+
+    .restaurant-logo {
+      width: 72px; height: 72px;
+      background: var(--amber); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.2rem; font-size: 32px;
+    }
+
+    .restaurant-name {
+      font-family: var(--font-display);
+      font-size: 32px; font-weight: 600;
+      color: var(--cream); letter-spacing: 0.02em; margin-bottom: 4px;
+    }
+
+    .restaurant-tagline {
+      font-size: 11px; font-weight: 300;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(245,166,35,0.6); margin-bottom: 2.5rem;
+    }
+
+    .landing-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(245,166,35,0.2);
+      border-radius: 20px; padding: 1.8rem 1.5rem;
+      margin-bottom: 2rem; max-width: 320px; width: 100%;
+    }
+
+    .landing-card h2 {
+      font-family: var(--font-display); font-size: 20px;
+      color: var(--cream); margin-bottom: 8px; font-weight: 600;
+    }
+
+    .landing-card p {
+      font-size: 13px; color: rgba(253,246,238,0.55); line-height: 1.6; font-weight: 300;
+    }
+
+    .steps { display: flex; flex-direction: column; gap: 12px; margin-top: 1.2rem; text-align: left; }
+    .step-row { display: flex; align-items: center; gap: 12px; }
+
+    .step-dot {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: rgba(212,131,10,0.2); border: 1px solid rgba(212,131,10,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 500; color: var(--amber-light); flex-shrink: 0;
+    }
+
+    .step-text { font-size: 12px; color: rgba(253,246,238,0.7); font-weight: 300; }
+
+    .start-btn {
+      width: 100%; max-width: 320px; padding: 16px;
+      background: linear-gradient(135deg, var(--amber) 0%, var(--amber-light) 100%);
+      border: none; border-radius: 14px; font-family: var(--font-body);
+      font-size: 15px; font-weight: 500; color: var(--brown);
+      letter-spacing: 0.04em; cursor: pointer; transition: transform 0.15s ease;
+    }
+    .start-btn:active { transform: scale(0.97); }
+
+    .compat-note {
+      margin-top: 1rem; font-size: 10px;
+      color: rgba(253,246,238,0.25); letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    /* ── AR VIEW (camera + overlays) ── */
+    #arView {
+      position: fixed; inset: 0;
+      z-index: 1;
+      display: none;
+    }
+
+    /* ── TOP BAR ── */
+    #topBar {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: none;
+      padding: 16px;
+      justify-content: space-between; align-items: center;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+    }
+
+    .top-brand {
+      font-family: var(--font-display); font-size: 15px;
+      color: var(--cream); letter-spacing: 0.06em; opacity: 0.9;
+    }
+
+    .surface-hint {
+      font-size: 10px; font-weight: 300;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(245,166,35,0.8);
+    }
+
+    /* ── DISH INFO OVERLAY ── */
+    #dishInfo {
+      position: fixed; top: 70px; left: 16px; right: 16px;
+      z-index: 100; display: none;
+    }
+
+    .info-card {
+      background: rgba(10,4,0,0.78);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(245,166,35,0.25);
+      border-radius: 18px; padding: 14px 16px;
+      display: flex; align-items: center; gap: 14px;
+    }
+
+    .info-emoji { font-size: 36px; flex-shrink: 0; }
+    .info-text { flex: 1; }
+    .info-name  { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--cream); line-height: 1.2; margin-bottom: 3px; }
+    .info-desc  { font-size: 11px; color: rgba(253,246,238,0.55); font-weight: 300; line-height: 1.5; margin-bottom: 5px; }
+    .info-price { font-size: 16px; font-weight: 500; color: var(--amber-light); }
+
+    /* ── MODEL VIEWER (positioned over camera feed) ── */
+    #modelContainer {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -60%);
+      width: 280px; height: 280px;
+      z-index: 50;
+      display: none;
+      pointer-events: none;
+    }
+
+    model-viewer {
+      width: 100%; height: 100%;
+      background-color: transparent;
+      --poster-color: transparent;
+    }
+
+    /* ── SCAN RETICLE ── */
+    #reticle {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 60; display: none; pointer-events: none;
+      text-align: center;
+    }
+
+    .reticle-frame {
+      width: 140px; height: 140px; position: relative; margin: 0 auto 12px;
+    }
+
+    .rf-corner {
+      position: absolute; width: 24px; height: 24px;
+      border-color: var(--amber-light); border-style: solid; opacity: 0.8;
+    }
+    .rf-tl { top:0; left:0;  border-width: 2px 0 0 2px; }
+    .rf-tr { top:0; right:0; border-width: 2px 2px 0 0; }
+    .rf-bl { bottom:0; left:0;  border-width: 0 0 2px 2px; }
+    .rf-br { bottom:0; right:0; border-width: 0 2px 2px 0; }
+
+    .reticle-scan {
+      position: absolute; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--amber-light), transparent);
+      animation: scanline 2s ease-in-out infinite;
+    }
+    @keyframes scanline {
+      0%   { top: 10%; opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      100% { top: 90%; opacity: 0; }
+    }
+
+    .reticle-text {
+      font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+      color: rgba(245,166,35,0.7);
+    }
+
+    /* ── DISH MENU ── */
+    #dishMenu {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      z-index: 100; display: none;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .menu-sheet {
+      background: linear-gradient(180deg, rgba(40,16,2,0.95) 0%, rgba(20,8,0,0.98) 100%);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(245,166,35,0.15);
+      border-radius: 24px 24px 0 0; padding: 14px 0 24px;
+    }
+
+    .menu-handle {
+      width: 36px; height: 4px; background: rgba(255,255,255,0.15);
+      border-radius: 2px; margin: 0 auto 12px;
+    }
+
+    .menu-title {
+      font-family: var(--font-display); font-size: 13px; font-style: italic;
+      color: rgba(245,166,35,0.7); text-align: center; margin-bottom: 12px; letter-spacing: 0.05em;
+    }
+
+    .dish-scroll {
+      display: flex; gap: 12px; padding: 4px 16px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .dish-scroll::-webkit-scrollbar { display: none; }
+
+    .dish-chip {
+      flex-shrink: 0; display: flex; flex-direction: column;
+      align-items: center; gap: 6px; cursor: pointer; transition: transform 0.15s ease;
+    }
+    .dish-chip:active { transform: scale(0.94); }
+
+    .dish-chip-img {
+      width: 64px; height: 64px; border-radius: 16px;
+      border: 2px solid transparent; transition: border-color 0.2s;
+      background: rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center; font-size: 28px;
+    }
+
+    .dish-chip.active .dish-chip-img  { border-color: var(--amber-light); }
+    .dish-chip-name { font-size: 10px; font-weight: 400; color: rgba(253,246,238,0.6); text-align: center; max-width: 70px; line-height: 1.3; }
+    .dish-chip.active .dish-chip-name { color: var(--amber-light); }
+
+    /* ── PLACE BUTTON ── */
+    #placeBtn {
+      position: fixed; bottom: 185px; left: 50%; transform: translateX(-50%);
+      z-index: 100; display: none;
+      background: linear-gradient(135deg, var(--amber) 0%, var(--amber-light) 100%);
+      border: none; border-radius: 50px; padding: 14px 36px;
+      font-family: var(--font-body); font-size: 14px; font-weight: 500;
+      color: var(--brown); letter-spacing: 0.04em; cursor: pointer; white-space: nowrap;
+      box-shadow: 0 4px 24px rgba(212,131,10,0.45);
+      animation: pulse-btn 2s ease-in-out infinite;
+    }
+    @keyframes pulse-btn {
+      0%,100% { box-shadow: 0 4px 24px rgba(212,131,10,0.4); }
+      50%      { box-shadow: 0 4px 36px rgba(212,131,10,0.75); }
+    }
+    #placeBtn:active { transform: translateX(-50%) scale(0.96); }
+
+    /* ── iOS QUICK LOOK BUTTON ── */
+    #iosBtn {
+      position: fixed; bottom: 245px; left: 50%; transform: translateX(-50%);
+      z-index: 100; display: none;
+      background: rgba(10,4,0,0.82);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(245,166,35,0.35); border-radius: 50px;
+      padding: 11px 28px; font-family: var(--font-body);
+      font-size: 13px; font-weight: 400; color: var(--amber-light);
+      letter-spacing: 0.05em; cursor: pointer; white-space: nowrap; text-decoration: none;
+    }
+
+    /* ── CAMERA ERROR ── */
+    #camError {
+      position: fixed; inset: 0; z-index: 9998;
+      background: linear-gradient(160deg, #2A0E00, #3D1C02);
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem; text-align: center; gap: 16px;
+    }
+    .error-emoji { font-size: 48px; }
+    .error-title { font-family: var(--font-display); font-size: 22px; color: var(--cream); }
+    .error-text  { font-size: 13px; color: rgba(253,246,238,0.55); line-height: 1.6; max-width: 280px; }
+    .retry-btn {
+      margin-top: 8px; padding: 13px 32px;
+      background: linear-gradient(135deg, var(--amber), var(--amber-light));
+      border: none; border-radius: 50px; font-size: 14px; font-weight: 500;
+      color: var(--brown); cursor: pointer;
+    }
+
+    /* ── LOADING SPINNER ── */
+    #modelLoader {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      z-index: 200; display: none; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .loader-ring {
+      width: 42px; height: 42px;
+      border: 2px solid rgba(245,166,35,0.2); border-top-color: var(--amber-light);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader-text { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245,166,35,0.6); }
+  </style>
+</head>
+<body>
+
+<!-- ── LIVE CAMERA FEED ── -->
+<video id="cameraFeed" autoplay playsinline muted></video>
+
+<!-- ── LANDING SCREEN ── -->
+<div id="landingScreen">
+  <div class="restaurant-logo">🍽️</div>
+  <div class="restaurant-name">La Maison</div>
+  <div class="restaurant-tagline">AR Dining Experience</div>
+
+  <div class="landing-card">
+    <h2>See your dish before you order</h2>
+    <p>Point your camera at any flat surface and watch your meal come to life — right on your table.</p>
+    <div class="steps">
+      <div class="step-row"><div class="step-dot">1</div><span class="step-text">Tap "Start AR" and allow camera access</span></div>
+      <div class="step-row"><div class="step-dot">2</div><span class="step-text">Point at your table or any flat surface</span></div>
+      <div class="step-row"><div class="step-dot">3</div><span class="step-text">Pick a dish and tap "Place on Table"</span></div>
+    </div>
+  </div>
+
+  <button class="start-btn" id="startBtn">Start AR Experience</button>
+  <p class="compat-note">Works on Chrome (Android) · Safari (iOS 15+)</p>
+</div>
+
+<!-- ── CAMERA ERROR ── -->
+<div id="camError">
+  <div class="error-emoji">📷</div>
+  <div class="error-title">Camera access needed</div>
+  <div class="error-text">Please allow camera access when prompted, then try again. Make sure you're using Chrome (Android) or Safari (iOS).</div>
+  <button class="retry-btn" onclick="startCamera()">Try Again</button>
+</div>
+
+<!-- ── TOP BAR ── -->
+<div id="topBar">
+  <span class="top-brand">La Maison · AR</span>
+  <span class="surface-hint" id="surfaceHintText">Point at a surface</span>
+</div>
+
+<!-- ── DISH INFO ── -->
+<div id="dishInfo">
+  <div class="info-card">
+    <div class="info-emoji" id="infoEmoji">🍝</div>
+    <div class="info-text">
+      <div class="info-name"  id="infoName">Pasta Carbonara</div>
+      <div class="info-desc"  id="infoDesc">Classic Roman pasta with guanciale, egg yolk, Pecorino Romano and black pepper.</div>
+      <div class="info-price" id="infoPrice">Rs. 420</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SCAN RETICLE ── -->
+<div id="reticle">
+  <div class="reticle-frame">
+    <div class="rf-corner rf-tl"></div>
+    <div class="rf-corner rf-tr"></div>
+    <div class="rf-corner rf-bl"></div>
+    <div class="rf-corner rf-br"></div>
+    <div class="reticle-scan"></div>
+  </div>
+  <div class="reticle-text">Point at a flat surface</div>
+</div>
+
+<!-- ── 3D MODEL VIEWER (overlaid on camera) ── -->
+<div id="modelContainer">
+  <model-viewer
+    id="dishViewer"
+    src="3d Dish/Pasta Carbonara.glb"
+    ios-src="3d Dish/Pasta Carbonara.usdz"
+    alt="Pasta Carbonara 3D model"
+    shadow-intensity="0"
+    camera-controls
+    touch-action="pan-y"
+    auto-rotate
+    auto-rotate-delay="0"
+    rotation-per-second="30deg"
+    style="background:transparent;">
+  </model-viewer>
+</div>
+
+<!-- ── LOADING SPINNER ── -->
+<div id="modelLoader">
+  <div class="loader-ring"></div>
+  <div class="loader-text">Loading model…</div>
+</div>
+
+<!-- ── iOS QUICK LOOK ── -->
+<a id="iosBtn" rel="ar" href="3d Dish/Pasta Carbonara.usdz">
+  View in iOS AR 🍎
+</a>
+
+<!-- ── PLACE BUTTON ── -->
+<button id="placeBtn">Place on Table 🍽️</button>
+
+<!-- ── DISH MENU ── -->
+<div id="dishMenu">
+  <div class="menu-sheet">
+    <div class="menu-handle"></div>
+    <div class="menu-title">Choose a dish to preview</div>
+    <div class="dish-scroll" id="dishScroll"></div>
+  </div>
+</div>
+
+<script>
+  /* ── DISH DATA ── */
+  const dishes = [
+    {
+      id: 'pasta', emoji: '🍝', name: 'Pasta Carbonara',
+      desc: 'Classic Roman pasta with guanciale, egg yolk, Pecorino Romano and black pepper.',
+      price: 'Rs. 420',
+      glb: '3d Dish/Pasta Carbonara.glb',
+      usdz: '3d Dish/Pasta Carbonara.usdz'
+    },
+    {
+      id: 'steak', emoji: '🥩', name: 'Grilled Tenderloin',
+      desc: 'Prime beef tenderloin, grilled to perfection with herb butter and truffle jus.',
+      price: 'Rs. 1,250', glb: null, usdz: null
+    },
+    {
+      id: 'sushi', emoji: '🍱', name: 'Signature Sushi Platter',
+      desc: "Chef's selection of 12 pieces — salmon, tuna, prawn and avocado rolls.",
+      price: 'Rs. 880', glb: null, usdz: null
+    },
+    {
+      id: 'burger', emoji: '🍔', name: 'Truffle Smash Burger',
+      desc: 'Double smash patty, truffle aioli, aged cheddar, caramelised onion brioche bun.',
+      price: 'Rs. 560', glb: null, usdz: null
+    },
+    {
+      id: 'dessert', emoji: '🍮', name: 'Crème Brûlée',
+      desc: 'Classic French vanilla custard with a perfectly caramelised sugar crust.',
+      price: 'Rs. 320', glb: null, usdz: null
+    }
+  ];
+
+  let activeDish  = dishes[0];
+  let dishPlaced  = false;
+  let arStarted   = false;
+  const isIOS     = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  /* ── DOM REFS ── */
+  const landingScreen = document.getElementById('landingScreen');
+  const camError      = document.getElementById('camError');
+  const cameraFeed    = document.getElementById('cameraFeed');
+  const topBar        = document.getElementById('topBar');
+  const surfaceHint   = document.getElementById('surfaceHintText');
+  const dishInfo      = document.getElementById('dishInfo');
+  const reticle       = document.getElementById('reticle');
+  const modelContainer= document.getElementById('modelContainer');
+  const dishViewer    = document.getElementById('dishViewer');
+  const modelLoader   = document.getElementById('modelLoader');
+  const placeBtn      = document.getElementById('placeBtn');
+  const iosBtn        = document.getElementById('iosBtn');
+  const dishMenu      = document.getElementById('dishMenu');
+  const dishScroll    = document.getElementById('dishScroll');
+  const infoEmoji     = document.getElementById('infoEmoji');
+  const infoName      = document.getElementById('infoName');
+  const infoDesc      = document.getElementById('infoDesc');
+  const infoPrice     = document.getElementById('infoPrice');
+  const startBtn      = document.getElementById('startBtn');
+
+  /* ── BUILD DISH CHIPS ── */
+  dishes.forEach((dish, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'dish-chip' + (i === 0 ? ' active' : '');
+    chip.innerHTML = `
+      <div class="dish-chip-img">${dish.emoji}</div>
+      <div class="dish-chip-name">${dish.name.split(' ').slice(0,2).join(' ')}</div>
+    `;
+    chip.addEventListener('click', () => selectDish(dish, chip));
+    dishScroll.appendChild(chip);
+  });
+
+  /* ── SELECT DISH ── */
+  function selectDish(dish, chipEl) {
+    activeDish = dish;
+    document.querySelectorAll('.dish-chip').forEach(c => c.classList.remove('active'));
+    chipEl.classList.add('active');
+
+    // Update info card
+    infoEmoji.textContent = dish.emoji;
+    infoName.textContent  = dish.name;
+    infoDesc.textContent  = dish.desc;
+    infoPrice.textContent = dish.price;
+
+    // Swap model
+    if (dish.glb) {
+      modelLoader.style.display = 'flex';
+      dishViewer.setAttribute('src', dish.glb);
+      dishViewer.setAttribute('ios-src', dish.usdz || '');
+      dishViewer.addEventListener('load', () => {
+        modelLoader.style.display = 'none';
+      }, { once: true });
+      if (dishPlaced) modelContainer.style.display = 'block';
+    } else {
+      modelContainer.style.display = 'none';
+      modelLoader.style.display = 'none';
+    }
+
+    // iOS button
+    if (dish.usdz && isIOS) {
+      iosBtn.href = dish.usdz;
+      iosBtn.style.display = 'block';
+    } else {
+      iosBtn.style.display = 'none';
+    }
+  }
+
+  /* ── START CAMERA ── */
+  async function startCamera() {
+    camError.style.display = 'none';
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: 'environment' }, // rear camera
+          width:  { ideal: 1280 },
+          height: { ideal: 720 }
+        },
+        audio: false
+      });
+
+      cameraFeed.srcObject = stream;
+      cameraFeed.style.display = 'block';
+
+      // Show AR UI
+      topBar.style.display    = 'flex';
+      reticle.style.display   = 'block';
+      placeBtn.style.display  = 'block';
+      dishMenu.style.display  = 'block';
+      if (isIOS && activeDish.usdz) iosBtn.style.display = 'block';
+      arStarted = true;
+
+      // Load the 3D model in background
+      modelLoader.style.display = 'flex';
+      dishViewer.addEventListener('load', () => {
+        modelLoader.style.display = 'none';
+        surfaceHint.textContent = 'Tap "Place on Table" to place dish';
+      }, { once: true });
+
+      // Fallback hide loader
+      setTimeout(() => { modelLoader.style.display = 'none'; }, 10000);
+
+    } catch (err) {
+      console.error('Camera error:', err);
+      camError.style.display = 'flex';
+    }
+  }
+
+  /* ── START BUTTON ── */
+  startBtn.addEventListener('click', async () => {
+    landingScreen.style.opacity = '0';
+    landingScreen.style.transition = 'opacity 0.5s ease';
+    setTimeout(async () => {
+      landingScreen.style.display = 'none';
+      await startCamera();
+    }, 500);
+  });
+
+  /* ── PLACE DISH ── */
+  placeBtn.addEventListener('click', () => {
+    if (!arStarted) return;
+
+    if (!activeDish.glb) {
+      surfaceHint.textContent = 'No 3D model for this dish yet';
+      return;
+    }
+
+    dishPlaced = true;
+    modelContainer.style.display = 'block';
+    dishInfo.style.display = 'block';
+    reticle.style.display  = 'none';
+
+    placeBtn.textContent = 'Move Dish 🔄';
+    surfaceHint.textContent = 'Drag to move · Pinch to resize';
+
+    infoEmoji.textContent = activeDish.emoji;
+    infoName.textContent  = activeDish.name;
+    infoDesc.textContent  = activeDish.desc;
+    infoPrice.textContent = activeDish.price;
+  });
+
+  /* ── DRAG MODEL POSITION ── */
+  let isDragging = false;
+  let startX = 0, startY = 0;
+  let posX = 50, posY = 40; // % from center
+
+  modelContainer.style.pointerEvents = 'auto';
+
+  modelContainer.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      isDragging = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchmove', (e) => {
+    if (!isDragging || !dishPlaced) return;
+    const dx = e.touches[0].clientX - startX;
+    const dy = e.touches[0].clientY - startY;
+    const rect = document.body.getBoundingClientRect();
+    posX = Math.max(10, Math.min(90, posX + (dx / rect.width  * 100)));
+    posY = Math.max(10, Math.min(85, posY + (dy / rect.height * 100)));
+    modelContainer.style.left = posX + '%';
+    modelContainer.style.top  = posY + '%';
+    modelContainer.style.transform = 'translate(-50%, -50%)';
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', () => { isDragging = false; });
+
+  document.addEventListener('contextmenu', e => e.preventDefault());
+</script>
+</body>
+</html>
