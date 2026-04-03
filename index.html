@@ -27,11 +27,15 @@
 
     body {
       font-family: var(--font-body);
-      background: var(--brown);
+      background: transparent;
       overflow: hidden;
       height: 100vh;
       width: 100vw;
     }
+
+    /* Keep camera feed visible */
+    a-scene, .a-canvas { background-color: transparent !important; }
+    body.ar-active { background: transparent !important; }
 
     #landingScreen {
       position: fixed; inset: 0;
@@ -492,6 +496,8 @@
     setTimeout(() => {
       landingScreen.style.display = 'none';
       arScene.style.display = 'block';
+      document.body.style.background = 'transparent';
+      document.body.classList.add('ar-active');
       dishMenu.style.display = 'block';
       reticle.style.display  = 'block';
       placeBtn.style.display = 'block';
